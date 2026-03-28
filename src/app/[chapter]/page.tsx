@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { StaticPicture } from "@/components/media/StaticPicture";
 import { chapters } from "@/lib/site-data";
 
 type ChapterPageProps = {
@@ -61,6 +62,31 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
           <li>Global branding can stay consistent while local content changes.</li>
           <li>Subdirectory-based chapter rollout works for the first MVP.</li>
         </ul>
+      </section>
+
+      <section className="grid gap-6 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold text-slate-950">
+            Chapter pages stay within a low-bandwidth footprint
+          </h2>
+          <p className="text-sm leading-7 text-slate-700">
+            Media loads lazily below the fold and uses a multi-format fallback
+            chain so chapter pages remain compact even when regional teams add
+            visuals later.
+          </p>
+        </div>
+        <StaticPicture
+          alt={`${chapter.name} low-bandwidth chapter visual`}
+          width={960}
+          height={576}
+          className="overflow-hidden rounded-[1.5rem] border border-slate-200"
+          sources={[
+            { srcSet: "/images/network-card.avif", type: "image/avif" },
+            { srcSet: "/images/network-card.webp", type: "image/webp" },
+          ]}
+          fallbackSrc="/images/network-card.jpg"
+          loading="lazy"
+        />
       </section>
     </main>
   );

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { StaticPicture } from "@/components/media/StaticPicture";
 import { chapters, coaches } from "@/lib/site-data";
 
 const featuredStats = [
@@ -96,6 +97,34 @@ export default function HomePage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="grid gap-8 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm lg:grid-cols-[1.1fr_0.9fr] lg:p-8">
+        <div className="space-y-4">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-sky-800">
+            Low-bandwidth media
+          </p>
+          <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+            Images use multi-format fallbacks and stay well below the size cap.
+          </h2>
+          <p className="text-base leading-7 text-slate-700">
+            This starter uses a native <code>&lt;picture&gt;</code> pattern with
+            AVIF first, WebP second, and JPEG fallback. The demo asset is under
+            20 KB in every shipped format, which keeps it safe for slow mobile
+            networks.
+          </p>
+        </div>
+        <StaticPicture
+          alt="Illustration of WIAL chapter connections across a global network"
+          width={960}
+          height={576}
+          className="overflow-hidden rounded-[1.5rem] border border-slate-200"
+          sources={[
+            { srcSet: "/images/network-card.avif", type: "image/avif" },
+            { srcSet: "/images/network-card.webp", type: "image/webp" },
+          ]}
+          fallbackSrc="/images/network-card.jpg"
+        />
       </section>
 
       <section className="space-y-6">

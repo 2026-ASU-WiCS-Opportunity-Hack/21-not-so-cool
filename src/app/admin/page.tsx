@@ -1,3 +1,5 @@
+import { OfflineQueueForm } from "@/components/forms/OfflineQueueForm";
+
 export default function AdminPage() {
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-6 py-12 sm:px-10">
@@ -29,6 +31,56 @@ export default function AdminPage() {
             {item}
           </div>
         ))}
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-2">
+        <OfflineQueueForm
+          title="Dues payment initiation"
+          description="When connectivity drops, the request is queued locally and retried automatically once the device is back online."
+          endpoint="/api/forms/submit"
+          queueType="dues-payment"
+          fields={[
+            {
+              name: "chapter",
+              label: "Chapter",
+              placeholder: "WIAL Nigeria",
+            },
+            {
+              name: "coachEmail",
+              label: "Coach email",
+              placeholder: "coach@example.com",
+              type: "email",
+            },
+            {
+              name: "amount",
+              label: "Amount (USD)",
+              placeholder: "50",
+            },
+          ]}
+        />
+        <OfflineQueueForm
+          title="Coach profile update"
+          description="Profile edits are also stored offline first, so chapter teams can work from low-connectivity regions without losing changes."
+          endpoint="/api/forms/submit"
+          queueType="coach-profile"
+          fields={[
+            {
+              name: "coachName",
+              label: "Coach name",
+              placeholder: "Marisol de la Cruz",
+            },
+            {
+              name: "location",
+              label: "Location",
+              placeholder: "Manila, Philippines",
+            },
+            {
+              name: "bio",
+              label: "Short bio",
+              placeholder: "Action Learning facilitator for distributed teams",
+            },
+          ]}
+        />
       </section>
     </main>
   );
