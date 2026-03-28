@@ -1,0 +1,15 @@
+{
+  "name": "WIAL MVP Platform",
+  "short_name": "WIAL MVP",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f6fb",
+  "theme_color": "#0f3b57",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
