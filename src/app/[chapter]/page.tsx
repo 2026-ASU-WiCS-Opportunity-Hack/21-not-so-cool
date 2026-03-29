@@ -1,5 +1,5 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ChapterLocalNav } from "@/components/chapters/ChapterLocalNav";
 import { getChapterBySlug } from "@/lib/chapters";
 export const dynamic = "force-dynamic";
@@ -12,7 +12,9 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
   const { chapter: chapterSlug } = await params;
   const chapter = await getChapterBySlug(chapterSlug);
 
-  if (!chapter) notFound();
+  if (!chapter) {
+    notFound();
+  }
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-6 py-12 sm:px-10">
@@ -108,7 +110,29 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
             visuals later. Template version: {chapter.templateVersion}.
           </p>
         </div>
+
+        <StaticPicture
+          alt={`${chapter.name} chapter visual`}
+          width={960}
+          height={720}
+          fallbackSrc={chapter.heroImageUrl ?? "/images/wial-usa-placeholder.png"}
+          sources={chapter.heroImageUrl ? [{ srcSet: chapter.heroImageUrl, type: "image/jpeg" }] : []}
+          className="overflow-hidden rounded-[1.5rem]"
+        />
       </section>
+
+      <footer
+        style={{
+          background: "#1a1a1a",
+          color: "#888",
+          padding: "24px 40px",
+          textAlign: "center",
+          fontSize: 13,
+          marginTop: 80,
+        }}
+      >
+        Copyright WIAL Global. All rights reserved.
+      </footer>
     </main>
   );
 }
