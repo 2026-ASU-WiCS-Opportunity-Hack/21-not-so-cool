@@ -1,146 +1,107 @@
-'use client'
+import { AdminSignOutButton } from "@/components/admin/AdminSignOutButton";
+import { ChapterContentEditor } from "@/components/admin/ChapterContentEditor";
+import { ChapterProvisionForm } from "@/components/admin/ChapterProvisionForm";
+import { requireAuthorizedAdmin } from "@/lib/admin-auth";
+import { listProvisionedChapters } from "@/lib/chapters";
+import { getSupabaseAdminClient } from "@/lib/supabase";
 
-import { useEffect, useState } from 'react'
-import { getSupabaseBrowserClient } from '@/lib/supabase'
-
-const supabase = getSupabaseBrowserClient()
-
-type Coach = {
-  id: string
-  full_name: string
-  cert_level: string
-  location: string
-  chapter_id: string
-}
-
-type Payment = {
-  coach_id: string
-  payment_type: string
-  status: string
-}
-
-const STATUS_COLORS: Record<string, string> = {
-  paid: '#2d7a2d',
-  pending: '#a06000',
-  unpaid: '#999',
-  failed: '#cc1f1f',
-}
-
-export default function AdminPage() {
-  const [coaches, setCoaches] = useState<Coach[]>([])
-  const [payments, setPayments] = useState<Payment[]>([])
-  const [loading, setLoading] = useState(true)
-
- useEffect(() => {
-  async function load() {
-    console.log('--- loading coaches ---')
-    
-    const { data: coachData, error: coachError } = await supabase
-      .from('coaches')
-      .select('id, full_name, cert_level, location, chapter_id')
-      .eq('is_approved', true)
-
-    console.log('coachData:', coachData)
-    console.log('coachError:', coachError)
-
-    const { data: paymentData, error: paymentError } = await supabase
-      .from('payments')
-      .select('coach_id, payment_type, status, amount_usd, paid_at')
-
-    console.log('paymentData:', paymentData)
-    console.log('paymentError:', paymentError)
-
-    setCoaches(coachData ?? [])
-    setPayments(paymentData ?? [])
-    setLoading(false)
-  }
-  load()
-}, [])
-
-  function getPaymentStatus(coachId: string, paymentType: string): string {
-    const match = payments.find(
-      (p) => p.coach_id === coachId && p.payment_type === paymentType
-    )
-    return match?.status ?? 'unpaid'
-  }
-
-  async function handlePay(coachId: string, chapterId: string, paymentType: 'enrollment' | 'certification') {
-    const res = await fetch('/api/stripe/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chapterId, coachId, paymentType }),
-    })
-    const data = await res.json()
-    if (data.url) window.location.href = data.url
-  }
-
-  if (loading) {
-    return (
-      <main style={{ padding: '64px 40px', fontFamily: 'sans-serif', textAlign: 'center', color: '#666' }}>
-        Loading…
-      </main>
-    )
-  }
+export default async function AdminPage() {
+  const currentAdmin = await requireAuthorizedAdmin();
+  const chapters = await listProvisionedChapters();
+  const provisioningEnabled = Boolean(getSupabaseAdminClient());
+  const editableChapters =
+    currentAdmin.role === "global_admin"
+      ? chapters
+      : chapters.filter((chapter) => chapter.slug === currentAdmin.chapterSlug);
 
   return (
-    <main style={{ padding: '40px', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: 24, marginBottom: 24 }}>Admin — Coach Payments</h1>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-        <thead>
-          <tr style={{ background: '#f5f5f5', textAlign: 'left' }}>
-            <th style={th}>Coach</th>
-            <th style={th}>Cert level</th>
-            <th style={th}>Location</th>
-            <th style={th}>Enrollment</th>
-            <th style={th}>Certification</th>
-            <th style={th}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {coaches.map((coach) => {
-            const enrollStatus = getPaymentStatus(coach.id, 'enrollment')
-            const certStatus = getPaymentStatus(coach.id, 'certification')
-            const enrollPaid = enrollStatus === 'paid'
-            const certPaid = certStatus === 'paid'
-            return (
-              <tr key={coach.id} style={{ borderBottom: '1px solid #eee' }}>
-                <td style={td}>{coach.full_name}</td>
-                <td style={td}>{coach.cert_level}</td>
-                <td style={td}>{coach.location}</td>
-                <td style={td}>
-                  <span style={{ color: STATUS_COLORS[enrollStatus] ?? '#999', fontWeight: 500 }}>
-                    {enrollStatus}
-                  </span>
-                </td>
-                <td style={td}>
-                  <span style={{ color: STATUS_COLORS[certStatus] ?? '#999', fontWeight: 500 }}>
-                    {certStatus}
-                  </span>
-                </td>
-                <td style={td}>
-                  <button
-                    disabled={enrollPaid}
-                    onClick={() => handlePay(coach.id, coach.chapter_id, 'enrollment')}
-                    style={btnStyle(enrollPaid)}
-                  >
-                    Pay $50 enrollment
-                  </button>
-                  <button
-                    disabled={certPaid}
-                    onClick={() => handlePay(coach.id, coach.chapter_id, 'certification')}
-                    style={{ ...btnStyle(certPaid), marginLeft: 8 }}
-                  >
-                    Pay $30 certification
-                  </button>
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-      {coaches.length === 0 && (
-        <p style={{ color: '#666', marginTop: 24 }}>No approved coaches found.</p>
-      )}
+    <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-6 py-12 sm:px-10">
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="space-y-4">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-sky-800">
+              Admin
+            </p>
+            <h1 className="text-4xl font-semibold tracking-tight text-slate-950">
+              Chapter provisioning
+            </h1>
+            <p className="max-w-3xl text-lg leading-8 text-slate-700">
+              This workspace provisions a live chapter record in Supabase and
+              makes the new chapter available immediately through the shared
+              WIAL route template.
+            </p>
+          </div>
+          <AdminSignOutButton />
+        </div>
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-[1.5rem] border border-slate-200 bg-white p-6 text-sm leading-7 text-slate-700 shadow-sm">
+          Signed in as: {currentAdmin.email}
+        </div>
+        <div className="rounded-[1.5rem] border border-slate-200 bg-white p-6 text-sm leading-7 text-slate-700 shadow-sm">
+          Role: {currentAdmin.role}
+        </div>
+        <div className="rounded-[1.5rem] border border-slate-200 bg-white p-6 text-sm leading-7 text-slate-700 shadow-sm">
+          {currentAdmin.chapterSlug
+            ? `Assigned chapter: ${currentAdmin.chapterSlug}`
+            : `Active chapters listed below: ${chapters.length}`}
+        </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+        <ChapterProvisionForm disabled={!provisioningEnabled} />
+
+        <section className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="space-y-3">
+            <h2 className="text-2xl font-semibold text-slate-950">
+              Current chapter sites
+            </h2>
+            <p className="text-sm leading-7 text-slate-700">
+              These routes are being served from provisioned chapter data.
+            </p>
+          </div>
+
+          <div className="mt-6 space-y-3">
+            {chapters.map((chapter) => (
+              <div
+                key={chapter.slug}
+                className="rounded-2xl border border-slate-200 px-4 py-3 text-sm leading-7 text-slate-700"
+              >
+                <p className="font-semibold text-slate-950">{chapter.name}</p>
+                <p>Route: /{chapter.slug}</p>
+                <p>About: /{chapter.slug}/about</p>
+                <p>Contact: /{chapter.slug}/contact</p>
+                <p>Status: {chapter.status}</p>
+                <p>Contact: {chapter.contactEmail}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </section>
+
+      <section className="space-y-6">
+        <div className="space-y-3">
+          <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+            Chapter content overrides
+          </h2>
+          <p className="max-w-3xl text-base leading-8 text-slate-700">
+            Update the live copy used by chapter overview, about, and contact
+            pages. Changes save directly to Supabase and appear immediately on
+            the chapter routes.
+          </p>
+        </div>
+
+        <div className="grid gap-6">
+          {editableChapters.map((chapter) => (
+            <ChapterContentEditor
+              key={chapter.slug}
+              chapter={chapter}
+              canEdit={provisioningEnabled}
+            />
+          ))}
+        </div>
+      </section>
     </main>
   )
 }
