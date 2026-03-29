@@ -55,6 +55,29 @@ const socialLinks = [
   { href: "https://youtube.com", label: "YouTube", icon: FaYoutube },
 ];
 
+const chapterRouteHighlights = [
+  {
+    slug: "usa",
+    name: "WIAL USA",
+    region: "North America",
+  },
+  {
+    slug: "nigeria",
+    name: "WIAL Nigeria",
+    region: "West Africa",
+  },
+  {
+    slug: "brazil",
+    name: "WIAL Brazil",
+    region: "South America",
+  },
+  {
+    slug: "canada",
+    name: "WIAL Canada",
+    region: "North America",
+  },
+];
+
 export default function HomePage() {
   return (
     <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-8 px-4 py-8 sm:px-8 lg:px-10">
@@ -130,6 +153,12 @@ export default function HomePage() {
             className="inline-flex rounded-xl bg-[#0d809b] px-6 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-[#0b6c84]"
           >
             Learn About WIAL
+          </Link>
+          <Link
+            href="/start-a-chapter"
+            className="inline-flex rounded-xl border border-white/70 px-6 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-white hover:text-[#d50f45]"
+          >
+            Launch a Chapter
           </Link>
           <Link
             href="/contact"
@@ -272,6 +301,41 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="rounded-[2rem] bg-white px-8 py-10 shadow-[0_12px_36px_rgba(28,40,70,0.08)]">
+        <p className="text-sm uppercase tracking-[0.24em] text-[#14c9ad]">
+          Chapter Routes
+        </p>
+        <h2 className="mt-4 text-3xl font-semibold tracking-tight text-[#5b5b5b]">
+          Individual chapter pages are live from the same deployment
+        </h2>
+        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {chapterRouteHighlights.map((chapter) => (
+            <article
+              key={chapter.slug}
+              className="rounded-[1.5rem] border border-slate-200 p-5"
+            >
+              <p className="text-sm uppercase tracking-[0.18em] text-[#0b4a9c]">
+                {chapter.region}
+              </p>
+              <h3 className="mt-3 text-xl font-semibold text-slate-950">
+                {chapter.name}
+              </h3>
+              <div className="mt-4 flex flex-col gap-2 text-sm">
+                <Link href={`/${chapter.slug}`} className="font-semibold text-[#d50f45] underline">
+                  /{chapter.slug}
+                </Link>
+                <Link href={`/${chapter.slug}/about`} className="text-slate-600 underline">
+                  /{chapter.slug}/about
+                </Link>
+                <Link href={`/${chapter.slug}/contact`} className="text-slate-600 underline">
+                  /{chapter.slug}/contact
+                </Link>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
     </main>

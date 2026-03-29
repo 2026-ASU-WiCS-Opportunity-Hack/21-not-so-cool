@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChapterLocalNav } from "@/components/chapters/ChapterLocalNav";
 import { getChapterBySlug } from "@/lib/chapters";
+import { getChapterRoutePath } from "@/lib/deployment";
 export const dynamic = "force-dynamic";
 
 type ChapterPageProps = {
@@ -65,7 +66,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
 
       <section className="grid gap-4 md:grid-cols-2">
         <Link
-          href={`/${chapter.slug}/about`}
+          href={getChapterRoutePath(chapter.slug, "/about")}
           className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-500"
         >
           <p className="text-sm uppercase tracking-[0.18em] text-sky-700">
@@ -81,7 +82,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
         </Link>
 
         <Link
-          href={`/${chapter.slug}/contact`}
+          href={getChapterRoutePath(chapter.slug, "/contact")}
           className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:border-sky-500"
         >
           <p className="text-sm uppercase tracking-[0.18em] text-sky-700">

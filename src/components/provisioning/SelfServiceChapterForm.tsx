@@ -1,35 +1,34 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 
-type ChapterProvisionFormProps = {
-  disabled?: boolean;
-};
-
-type ProvisionResult = {
+type SelfServiceResult = {
   ok: boolean;
   message: string;
   chapterUrl?: string;
+  inviteStatus?: "sent" | "existing-user" | "failed";
+  inviteDetail?: string;
+  fieldErrors?: Record<string, string[] | undefined>;
 };
 
-export function ChapterProvisionForm({
-  disabled = false,
-}: ChapterProvisionFormProps) {
+export function SelfServiceChapterForm() {
   const [isPending, startTransition] = useTransition();
-  const [result, setResult] = useState<ProvisionResult | null>(null);
+  const [result, setResult] = useState<SelfServiceResult | null>(null);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     const form = event.currentTarget;
     const formData = new FormData(form);
     const payload = Object.fromEntries(
       Array.from(formData.entries()).map(([key, value]) => [key, String(value)]),
     );
 
+    setResult(null);
+
     startTransition(async () => {
       try {
-        const response = await fetch("/api/admin/chapters", {
+        const response = await fetch("/api/chapters/self-service", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -37,7 +36,7 @@ export function ChapterProvisionForm({
           body: JSON.stringify(payload),
         });
 
-        const data = (await response.json()) as ProvisionResult;
+        const data = (await response.json()) as SelfServiceResult;
         setResult(data);
 
         if (response.ok) {
@@ -46,36 +45,58 @@ export function ChapterProvisionForm({
       } catch {
         setResult({
           ok: false,
-          message: "Unable to provision the chapter right now.",
+          message: "Unable to launch the chapter right now.",
         });
       }
     });
   }
 
   return (
-    <section className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="rounded-[2rem] bg-white px-8 py-10 shadow-[0_12px_40px_rgba(28,40,70,0.08)]">
       <div className="space-y-3">
-        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-sky-800">
-          Chapter Provisioning
+        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#8da7ff]">
+          Self-Service Provisioning
         </p>
-        <h2 className="text-2xl font-semibold text-slate-950">
-          Create a chapter site
+        <h2 className="text-3xl font-semibold tracking-tight text-[#5b5b5b]">
+          Launch a chapter site without waiting on a developer
         </h2>
-        <p className="text-sm leading-7 text-slate-700">
-          This provisions a new subdirectory chapter site using the shared WIAL
-          chapter template and makes it available immediately at{" "}
-          <code>/chapter-slug</code>.
+        <p className="max-w-3xl text-base leading-8 text-[#555]">
+          Submit one form to publish `wial.org/[slug]`, create the chapter lead
+          access record, and trigger the login invite.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-6 grid gap-4 md:grid-cols-2">
+      <form onSubmit={handleSubmit} className="mt-8 grid gap-4 md:grid-cols-2">
+        <label className="block space-y-2 text-sm">
+          <span className="font-medium text-slate-800">Lead name</span>
+          <input
+            name="leadName"
+            required
+            disabled={isPending}
+            placeholder="Amina Hassan"
+            className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-500 disabled:bg-slate-100"
+          />
+        </label>
+
+        <label className="block space-y-2 text-sm">
+          <span className="font-medium text-slate-800">Lead email</span>
+          <input
+            name="leadEmail"
+            type="email"
+            required
+            disabled={isPending}
+            placeholder="chapter.lead@wial.org"
+            className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-500 disabled:bg-slate-100"
+          />
+        </label>
+
         <label className="block space-y-2 text-sm">
           <span className="font-medium text-slate-800">Chapter name</span>
           <input
             name="name"
             required
-            disabled={disabled || isPending}
-            placeholder="WIAL Canada"
+            disabled={isPending}
+            placeholder="WIAL Kenya"
             className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-500 disabled:bg-slate-100"
           />
         </label>
@@ -85,9 +106,9 @@ export function ChapterProvisionForm({
           <input
             name="slug"
             required
-            disabled={disabled || isPending}
-            placeholder="canada"
             pattern="[a-z0-9\\-]+"
+            disabled={isPending}
+            placeholder="kenya"
             className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-500 disabled:bg-slate-100"
           />
         </label>
@@ -97,20 +118,20 @@ export function ChapterProvisionForm({
           <input
             name="region"
             required
-            disabled={disabled || isPending}
-            placeholder="North America"
+            disabled={isPending}
+            placeholder="East Africa"
             className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-500 disabled:bg-slate-100"
           />
         </label>
 
         <label className="block space-y-2 text-sm">
-          <span className="font-medium text-slate-800">Contact email</span>
+          <span className="font-medium text-slate-800">Public contact email</span>
           <input
             name="contactEmail"
             type="email"
             required
-            disabled={disabled || isPending}
-            placeholder="canada@wial.org"
+            disabled={isPending}
+            placeholder="kenya@wial.org"
             className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-500 disabled:bg-slate-100"
           />
         </label>
@@ -119,10 +140,10 @@ export function ChapterProvisionForm({
           <span className="font-medium text-slate-800">Summary</span>
           <textarea
             name="summary"
-            required
             rows={3}
-            disabled={disabled || isPending}
-            placeholder="A newly provisioned chapter site created from the shared WIAL chapter template."
+            required
+            disabled={isPending}
+            placeholder="A newly launched chapter site for local Action Learning visibility, events, and partnerships."
             className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-500 disabled:bg-slate-100"
           />
         </label>
@@ -131,10 +152,10 @@ export function ChapterProvisionForm({
           <span className="font-medium text-slate-800">Local focus</span>
           <textarea
             name="focus"
-            required
             rows={3}
-            disabled={disabled || isPending}
-            placeholder="National chapter launch planning and bilingual community visibility"
+            required
+            disabled={isPending}
+            placeholder="Regional network building, chapter launch events, and certified coach visibility."
             className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-500 disabled:bg-slate-100"
           />
         </label>
@@ -142,26 +163,17 @@ export function ChapterProvisionForm({
         <div className="md:col-span-2">
           <button
             type="submit"
-            disabled={disabled || isPending}
+            disabled={isPending}
             className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-500"
           >
-            {isPending ? "Provisioning..." : "Provision chapter"}
+            {isPending ? "Launching chapter..." : "Launch chapter site"}
           </button>
         </div>
       </form>
 
-      {disabled ? (
-        <p className="mt-4 text-sm leading-7 text-amber-700">
-          Add `NEXT_PUBLIC_SUPABASE_URL`, a public Supabase key
-          (`NEXT_PUBLIC_SUPABASE_ANON_KEY` or
-          `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`), and
-          `SUPABASE_SERVICE_ROLE_KEY` to enable authenticated provisioning.
-        </p>
-      ) : null}
-
       {result ? (
         <div
-          className={`mt-4 rounded-2xl px-4 py-3 text-sm leading-7 ${
+          className={`mt-6 rounded-2xl px-4 py-4 text-sm leading-7 ${
             result.ok
               ? "bg-emerald-50 text-emerald-900"
               : "bg-rose-50 text-rose-900"
@@ -169,8 +181,23 @@ export function ChapterProvisionForm({
         >
           <p>{result.message}</p>
           {result.chapterUrl ? (
-            <p className="mt-1 font-medium">New route: {result.chapterUrl}</p>
+            <p className="mt-1">
+              Live route:{" "}
+              <Link href={result.chapterUrl} className="font-semibold underline">
+                {result.chapterUrl}
+              </Link>
+            </p>
           ) : null}
+          {result.inviteDetail ? <p className="mt-1">{result.inviteDetail}</p> : null}
+          {result.fieldErrors
+            ? Object.entries(result.fieldErrors).map(([field, messages]) =>
+                messages?.length ? (
+                  <p key={field} className="mt-1">
+                    {field}: {messages.join(", ")}
+                  </p>
+                ) : null,
+              )
+            : null}
         </div>
       ) : null}
     </section>
