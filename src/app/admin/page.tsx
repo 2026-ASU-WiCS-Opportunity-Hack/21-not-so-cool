@@ -103,20 +103,5 @@ export default async function AdminPage() {
         </div>
       </section>
     </main>
-  )
-}
-
-const th: React.CSSProperties = { padding: '10px 12px', fontWeight: 600 }
-const td: React.CSSProperties = { padding: '10px 12px', verticalAlign: 'middle' }
-
-function btnStyle(disabled: boolean): React.CSSProperties {
-  return {
-    padding: '6px 12px',
-    fontSize: 13,
-    borderRadius: 6,
-    border: 'none',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    background: disabled ? '#ddd' : '#cc1f1f',
-    color: disabled ? '#999' : '#fff',
-  }
+  );
 }

@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 "use client";
 
 import { useEffect, useState } from "react";
 import { CoachCard, type CoachDirectoryItem } from "@/components/coaches/CoachCard";
 import { SearchBar } from "@/components/coaches/SearchBar";
 import { supabase } from "@/lib/supabase";
+=======
+import { CoachDirectory } from "@/components/coaches/CoachDirectory";
+import { coaches } from "@/lib/site-data";
+>>>>>>> 38236a3 (Admin-Coach-SearchBar)
 
 export default function CoachesPage() {
   const [coaches, setCoaches] = useState<CoachDirectoryItem[]>([]);
@@ -31,6 +36,7 @@ export default function CoachesPage() {
           Searchable, chapter-aware coach profiles.
         </h1>
         <p className="max-w-3xl text-lg leading-8 text-slate-700">
+<<<<<<< HEAD
           Now powered by live Supabase data.
         </p>
       </section>
@@ -42,6 +48,14 @@ export default function CoachesPage() {
           <CoachCard key={coach.id} coach={coach} />
         ))}
       </section>
+=======
+          Search by coach name, location, chapter, and certification level
+          using the integrated directory experience.
+        </p>
+      </section>
+
+      <CoachDirectory coaches={coaches} />
+>>>>>>> 38236a3 (Admin-Coach-SearchBar)
     </main>
   );
 }
