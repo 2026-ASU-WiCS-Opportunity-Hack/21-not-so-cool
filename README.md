@@ -9,6 +9,7 @@ This project rethinks the WIAL web experience as a modern, chapter-aware platfor
 **Event:** Women in Computer Science x Opportunity Hack: Spring 2026 Hackathon  
 **Theme:** Build technical solutions for nonprofit organizations and create technology that does good  
 **Hackathon page:** https://www.ohack.dev/hack/2026_spring_wics_asu  
+**Live project:** https://21-not-so-cool.vercel.app/  
 **DevPost:** https://wics-ohack-sp26-hackathon.devpost.com/  
 **Team Slack:** https://opportunity-hack.slack.com/app_redirect?channel=team-21-not-so-cool
 
