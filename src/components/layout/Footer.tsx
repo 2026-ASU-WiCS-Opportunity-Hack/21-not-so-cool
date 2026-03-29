@@ -34,6 +34,7 @@ export function Footer() {
           <Link href="/#home">Action Learning</Link>
           <Link href="/#contact">WIAL’s Team</Link>
           <Link href="/#contact">Contact</Link>
+          <Link href="/start-a-chapter">Start a Chapter</Link>
           <Link href="/admin/login">Admin Login</Link>
         </nav>
       </div>

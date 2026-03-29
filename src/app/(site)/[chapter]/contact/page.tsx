@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChapterLocalNav } from "@/components/chapters/ChapterLocalNav";
 import { getChapterBySlug } from "@/lib/chapters";
+import { getChapterRoutePath } from "@/lib/deployment";
 
 type ChapterContactPageProps = {
   params: Promise<{ chapter: string }>;
@@ -88,7 +89,7 @@ export default async function ChapterContactPage({
           </a>
         ) : (
           <Link
-            href={`/${chapter.slug}/about`}
+            href={getChapterRoutePath(chapter.slug, "/about")}
             className="mt-6 inline-flex rounded-xl bg-[#0d809b] px-6 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-[#0b6c84]"
           >
             Learn about this chapter

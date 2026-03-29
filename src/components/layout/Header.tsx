@@ -14,6 +14,7 @@ const navItems = [
   { href: "/#events", label: "Programs" },
   { href: "/#events", label: "Better World" },
   { href: "/about", label: "About Us" },
+  { href: "/start-a-chapter", label: "Start a Chapter" },
   { href: "/admin/login", label: "Admin Login" },
 ];
 

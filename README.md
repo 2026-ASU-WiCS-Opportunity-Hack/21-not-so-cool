@@ -31,6 +31,67 @@ cd 21-not-so-cool
 # Add your setup commands here
 ```
 
+## Deployment Modes
+
+This repo now supports two deployment modes from the same codebase:
+
+- `global`: serves the main WIAL experience
+- `chapter`: serves one country chapter as its own independent deployment/server
+
+### Global deployment
+
+Use these environment variables:
+
+```bash
+NEXT_PUBLIC_DEPLOYMENT_MODE=global
+NEXT_PUBLIC_GLOBAL_SITE_URL=https://wial.org
+```
+
+This deployment serves the shared WIAL pages such as `/`, `/about`, `/directory`, and `/start-a-chapter`.
+
+### Chapter deployment
+
+Each country can deploy the same repo in its own hosting account with its own billing by setting:
+
+```bash
+NEXT_PUBLIC_DEPLOYMENT_MODE=chapter
+NEXT_PUBLIC_CHAPTER_SLUG=usa
+NEXT_PUBLIC_GLOBAL_SITE_URL=https://wial.org
+```
+
+For a Nigeria server:
+
+```bash
+NEXT_PUBLIC_DEPLOYMENT_MODE=chapter
+NEXT_PUBLIC_CHAPTER_SLUG=nigeria
+NEXT_PUBLIC_GLOBAL_SITE_URL=https://wial.org
+```
+
+For Brazil:
+
+```bash
+NEXT_PUBLIC_DEPLOYMENT_MODE=chapter
+NEXT_PUBLIC_CHAPTER_SLUG=brazil
+NEXT_PUBLIC_GLOBAL_SITE_URL=https://wial.org
+```
+
+For Canada:
+
+```bash
+NEXT_PUBLIC_DEPLOYMENT_MODE=chapter
+NEXT_PUBLIC_CHAPTER_SLUG=canada
+NEXT_PUBLIC_GLOBAL_SITE_URL=https://wial.org
+```
+
+In chapter mode:
+
+- `/` serves that chapter overview
+- `/about` serves that chapter about page
+- `/contact` serves that chapter contact page
+- global-only routes can redirect back to the global WIAL deployment
+
+This lets each chapter run on its own server and hosting bill while still sharing one template codebase.
+
 
 ## Checklist for the final submission
 ### 0/Judging Criteria

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getChapterRoutePath } from "@/lib/deployment";
 
 type ChapterLocalNavProps = {
   chapterSlug: string;
@@ -18,7 +19,7 @@ export function ChapterLocalNav({
   return (
     <nav className="flex flex-wrap gap-3">
       {navItems.map((item) => {
-        const href = `/${chapterSlug}${item.suffix}`;
+        const href = getChapterRoutePath(chapterSlug, item.suffix);
         const isActive = item.suffix === currentPath;
 
         return (

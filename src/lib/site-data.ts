@@ -36,13 +36,22 @@ export const chapters: Chapter[] = [
     contactEmail: "nigeria@wial.org",
   },
   {
-    slug: "philippines",
-    name: "WIAL Philippines",
-    region: "Southeast Asia",
+    slug: "brazil",
+    name: "WIAL Brazil",
+    region: "South America",
     summary:
-      "A chapter template showing how WIAL can keep global branding while localizing content.",
-    focus: "Certification awareness and community engagement",
-    contactEmail: "philippines@wial.org",
+      "A chapter template showing how WIAL can keep global branding while localizing content for Portuguese-speaking audiences.",
+    focus: "Executive coaching and Action Learning programming for regional organizations",
+    contactEmail: "brazil@wial.org",
+  },
+  {
+    slug: "canada",
+    name: "WIAL Canada",
+    region: "North America",
+    summary:
+      "A newly provisioned-style chapter site designed for local launch visibility, partnerships, and chapter updates.",
+    focus: "National chapter launch planning and bilingual community visibility",
+    contactEmail: "canada@wial.org",
   },
 ];
 
@@ -64,11 +73,19 @@ export const coaches: Coach[] = [
     bio: "Works with emerging chapter partners and community leaders to launch Action Learning cohorts.",
   },
   {
-    name: "Marisol de la Cruz",
-    chapter: "Philippines",
+    name: "Ana Paula Ferreira",
+    chapter: "Brazil",
     certification: "SALC",
-    location: "Manila, Philippines",
-    email: "marisol.delacruz@example.com",
-    bio: "Facilitates coach development programs with a focus on distributed teams and virtual collaboration.",
+    location: "Sao Paulo, Brazil",
+    email: "ana.ferreira@example.com",
+    bio: "Supports mid-sized organizations using Action Learning for leadership growth and executive coaching.",
+  },
+  {
+    name: "Nadia Tremblay",
+    chapter: "Canada",
+    certification: "PALC",
+    location: "Montreal, Canada",
+    email: "nadia.tremblay@example.com",
+    bio: "Builds bilingual chapter communities and helps launch local coach networks across Canada.",
   },
 ];

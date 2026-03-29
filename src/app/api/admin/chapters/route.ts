@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { getCurrentAuthorizedAdmin } from "@/lib/admin-auth";
+<<<<<<< HEAD
+import {
+  chapterProvisionSchema,
+  provisionChapter,
+} from "@/lib/chapter-provisioning";
+
+export async function POST(request: Request) {
+=======
 import { getSupabaseAdmin } from "@/lib/supabase-server";
 
 const chapterProvisionSchema = z.object({
@@ -19,6 +26,7 @@ const chapterProvisionSchema = z.object({
 
 export async function POST(request: Request) {
   const supabase = getSupabaseAdmin();
+>>>>>>> origin/main
   const { user, admin } = await getCurrentAuthorizedAdmin();
 
   if (!user || !admin) {
@@ -28,17 +36,6 @@ export async function POST(request: Request) {
         message: "You are not authorized to provision chapters.",
       },
       { status: 403 },
-    );
-  }
-
-  if (!supabase) {
-    return NextResponse.json(
-      {
-        ok: false,
-        message:
-          "Supabase provisioning is not configured. Add the required environment variables first.",
-      },
-      { status: 503 },
     );
   }
 
@@ -54,7 +51,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const { name, slug, region, contactEmail, summary, focus } = payload.data;
+  const { name, region, summary, focus } = payload.data;
+  const slug = payload.data.slug.trim().toLowerCase();
+  const contactEmail = payload.data.contactEmail.trim().toLowerCase();
 
   if (admin.role === "chapter_lead" && admin.chapterSlug && admin.chapterSlug !== slug) {
     return NextResponse.json(
@@ -67,66 +66,29 @@ export async function POST(request: Request) {
     );
   }
 
-  const { data: existingChapter, error: existingChapterError } = await supabase
-    .from("chapters")
-    .select("slug")
-    .eq("slug", slug)
-    .maybeSingle<{ slug: string }>();
-
-  if (existingChapterError) {
-    return NextResponse.json(
-      {
-        ok: false,
-        message: "Unable to validate the chapter slug right now.",
-      },
-      { status: 500 },
-    );
-  }
-
-  if (existingChapter) {
-    return NextResponse.json(
-      {
-        ok: false,
-        message: "That chapter slug already exists.",
-      },
-      { status: 409 },
-    );
-  }
-
-  const { error } = await supabase.from("chapters").insert({
-    slug,
+  const result = await provisionChapter({
+    actorEmail: user.email?.trim().toLowerCase() ?? null,
     name,
+    slug,
     region,
-    contact_email: contactEmail,
-    description: summary,
+    contactEmail,
+    summary,
     focus,
-    about_heading: `About ${name}`,
-    about_body: `${name} operates within the shared WIAL network while adapting outreach, partnerships, and local programming to the needs of ${region}.`,
-    contact_heading: `Contact ${name}`,
-    contact_body:
-      "Reach the chapter directly for local programming, regional coaching activity, and partnership conversations.",
-    other_offerings_label: "Visit full affiliate site",
-    status: "active",
-    launch_mode: "subdirectory",
-    template_version: "wial-core-v1",
-    created_by: user.email?.trim().toLowerCase() ?? null,
-    updated_by: user.email?.trim().toLowerCase() ?? null,
-    updated_at: new Date().toISOString(),
   });
 
-  if (error) {
+  if (!result.ok) {
     return NextResponse.json(
       {
         ok: false,
-        message: "Provisioning failed while saving the chapter.",
+        message: result.message,
       },
-      { status: 500 },
+      { status: result.status },
     );
   }
 
   return NextResponse.json({
     ok: true,
     message: `Chapter provisioned successfully for /${slug}.`,
-    chapterUrl: `/${slug}`,
+    chapterUrl: result.chapterUrl,
   });
 }
