@@ -5,17 +5,12 @@ import { OneClickChapterProvisionButton } from "@/components/admin/OneClickChapt
 import { ChapterProvisionForm } from "@/components/admin/ChapterProvisionForm";
 import { requireAuthorizedAdmin } from "@/lib/admin-auth";
 import { listProvisionedChapters } from "@/lib/chapters";
-import { getSupabaseAdminClient } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-server";
 
 export default async function AdminPage() {
   const currentAdmin = await requireAuthorizedAdmin();
   const chapters = await listProvisionedChapters();
-  const provisioningEnabled = Boolean(getSupabaseAdminClient());
-  const existingChapterSlugs = new Set(chapters.map((chapter) => chapter.slug));
-  const showOneClickChapterProvision =
-    currentAdmin.role === "chapter_lead" &&
-    !!currentAdmin.provisionSlug &&
-    !existingChapterSlugs.has(currentAdmin.provisionSlug);
+  const provisioningEnabled = Boolean(getSupabaseAdmin());
   const editableChapters =
     currentAdmin.role === "global_admin"
       ? chapters
@@ -126,5 +121,5 @@ export default async function AdminPage() {
         </div>
       </section>
     </main>
-  );
+  )
 }

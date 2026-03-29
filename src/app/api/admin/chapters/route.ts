@@ -1,11 +1,32 @@
 import { NextResponse } from "next/server";
 import { getCurrentAuthorizedAdmin } from "@/lib/admin-auth";
+<<<<<<< HEAD
 import {
   chapterProvisionSchema,
   provisionChapter,
 } from "@/lib/chapter-provisioning";
 
 export async function POST(request: Request) {
+=======
+import { getSupabaseAdmin } from "@/lib/supabase-server";
+
+const chapterProvisionSchema = z.object({
+  name: z.string().trim().min(3).max(120),
+  slug: z
+    .string()
+    .trim()
+    .min(2)
+    .max(60)
+    .regex(/^[a-z0-9-]+$/),
+  region: z.string().trim().min(2).max(120),
+  contactEmail: z.email(),
+  summary: z.string().trim().min(12).max(600),
+  focus: z.string().trim().min(12).max(400),
+});
+
+export async function POST(request: Request) {
+  const supabase = getSupabaseAdmin();
+>>>>>>> origin/main
   const { user, admin } = await getCurrentAuthorizedAdmin();
 
   if (!user || !admin) {
