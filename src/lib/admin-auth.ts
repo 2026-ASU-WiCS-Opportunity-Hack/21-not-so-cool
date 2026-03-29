@@ -2,7 +2,7 @@ import "server-only";
 
 import { redirect } from "next/navigation";
 import { getSupabaseServerAuthClient } from "@/lib/supabase-auth";
-import { getSupabaseAdminClient } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-server";
 
 export type AuthorizedAdmin = {
   email: string;
@@ -34,7 +34,7 @@ export async function getCurrentAuthorizedAdmin() {
     return { user: null, admin: null as AuthorizedAdmin | null };
   }
 
-  const adminClient = getSupabaseAdminClient();
+  const adminClient = getSupabaseAdmin();
 
   if (!adminClient) {
     return { user, admin: null as AuthorizedAdmin | null };

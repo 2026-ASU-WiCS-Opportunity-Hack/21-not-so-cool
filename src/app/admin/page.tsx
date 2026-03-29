@@ -3,12 +3,12 @@ import { ChapterContentEditor } from "@/components/admin/ChapterContentEditor";
 import { ChapterProvisionForm } from "@/components/admin/ChapterProvisionForm";
 import { requireAuthorizedAdmin } from "@/lib/admin-auth";
 import { listProvisionedChapters } from "@/lib/chapters";
-import { getSupabaseAdminClient } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-server";
 
 export default async function AdminPage() {
   const currentAdmin = await requireAuthorizedAdmin();
   const chapters = await listProvisionedChapters();
-  const provisioningEnabled = Boolean(getSupabaseAdminClient());
+  const provisioningEnabled = Boolean(getSupabaseAdmin());
   const editableChapters =
     currentAdmin.role === "global_admin"
       ? chapters
@@ -104,19 +104,4 @@ export default async function AdminPage() {
       </section>
     </main>
   )
-}
-
-const th: React.CSSProperties = { padding: '10px 12px', fontWeight: 600 }
-const td: React.CSSProperties = { padding: '10px 12px', verticalAlign: 'middle' }
-
-function btnStyle(disabled: boolean): React.CSSProperties {
-  return {
-    padding: '6px 12px',
-    fontSize: 13,
-    borderRadius: 6,
-    border: 'none',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    background: disabled ? '#ddd' : '#cc1f1f',
-    color: disabled ? '#999' : '#fff',
-  }
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentAuthorizedAdmin } from "@/lib/admin-auth";
-import { getSupabaseAdminClient } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-server";
 
 const chapterProvisionSchema = z.object({
   name: z.string().trim().min(3).max(120),
@@ -18,7 +18,7 @@ const chapterProvisionSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const supabase = getSupabaseAdminClient();
+  const supabase = getSupabaseAdmin();
   const { user, admin } = await getCurrentAuthorizedAdmin();
 
   if (!user || !admin) {

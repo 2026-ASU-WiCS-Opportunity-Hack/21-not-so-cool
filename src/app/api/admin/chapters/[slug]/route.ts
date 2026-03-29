@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentAuthorizedAdmin } from "@/lib/admin-auth";
-import { getSupabaseAdminClient } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-server";
 
 const chapterContentSchema = z.object({
   summary: z.string().trim().min(12).max(600),
@@ -19,7 +19,7 @@ type RouteContext = {
 };
 
 export async function PATCH(request: Request, context: RouteContext) {
-  const supabase = getSupabaseAdminClient();
+  const supabase = getSupabaseAdmin();
   const { user, admin } = await getCurrentAuthorizedAdmin();
   const { slug } = await context.params;
 
