@@ -16,7 +16,7 @@ export function getSupabaseBrowserClient() {
     return null;
   }
 
-  return createBrowserClient(url, key);
+  return createClient(url, key);
 }
 
 export function getSupabaseServerPublicClient() {
