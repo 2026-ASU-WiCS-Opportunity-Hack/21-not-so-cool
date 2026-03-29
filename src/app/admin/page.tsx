@@ -11,6 +11,11 @@ export default async function AdminPage() {
   const currentAdmin = await requireAuthorizedAdmin();
   const chapters = await listProvisionedChapters();
   const provisioningEnabled = Boolean(getSupabaseAdmin());
+  const existingChapterSlugs = new Set(chapters.map((chapter) => chapter.slug));
+  const showOneClickChapterProvision =
+    currentAdmin.role === "chapter_lead" &&
+    !!currentAdmin.provisionSlug &&
+    !existingChapterSlugs.has(currentAdmin.provisionSlug);
   const editableChapters =
     currentAdmin.role === "global_admin"
       ? chapters
